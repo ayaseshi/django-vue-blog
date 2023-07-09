@@ -1,85 +1,155 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <div id="wrapper">
+    <nav class="navbar is-dark">
+      <div class="navbar-brand">
+        <RouterLink to="/" class="navbar-item logo">
+          <strong>BLOG</strong>
+        </RouterLink>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+        <a class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu" @click="toggleMobileMenu">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
+      <div class="navbar-menu" :class="{'is-active': isMobileMenuOpen}">
+        <div class="navbar-end">
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+              Dishes
+            </a>
+            <div class="navbar-dropdown is-right">
+              <RouterLink v-for="dish in dishes" :key="dish.id" :to="dish.url" class="navbar-item">
+                {{ dish.name }}
+              </RouterLink>
+            </div>
+          </div>
 
-  <RouterView />
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+              Opcje
+            </a>
+            <div class="navbar-dropdown is-right">
+              <a class="navbar-item">
+                Login
+              </a>
+              <a class="navbar-item">
+                Register
+              </a>
+              <a class="navbar-item">
+                Download ebook
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <section class="section">
+      <RouterView />
+    </section>
+
+    <footer class="footer">
+      <div class="content has-text-centered">
+          <p>
+            <a href="https://github.com/ayaseshi">
+            Created by ayaseshi
+            </a>
+          </p>
+      </div>
+    </footer>
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+<script>
+import axios from 'axios';
+
+export default {
+  data() {
+    return {
+      isMobileMenuOpen: false,
+      dishes: []
+    };
+  },
+  async mounted() {
+    try {
+      const response = await axios.get('/api/v1/tags/');
+      const data = response.data;
+
+      this.dishes = data.map(tag => {
+        return {
+          id: tag.id,
+          name: tag.name,
+          url: tag.url
+        };
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  methods: {
+    toggleMobileMenu() {
+      this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    },
+  },
+};
+</script>
+
+<style lang="scss">
+@import '../node_modules/bulma/bulma.sass';
+
+.navbar-item {
+  padding: 0.5rem 1rem;
 }
 
+.navbar-dropdown.is-right {
+  right: 0;
+}
+
+.footer {
+  background-color: #f5f5f5;
+  padding: 1rem 0;
+}
+
+/* Dodatkowe style dla napisu "BLOG" */
 .logo {
-  display: block;
-  margin: 0 auto 2rem;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
+/* Responsywność dla aplikacji na telefonach */
+@media screen and (max-width: 768px) {
+  .navbar-menu {
+    display: none;
+  }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
+  .navbar-burger {
+    display: block;
+  }
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
+  .navbar.is-active .navbar-menu {
     display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+    flex-direction: column;
+    align-items: flex-end;
+    background-color: #000000;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: auto;
+    z-index: 1;
+    padding: 1rem;
   }
 
-  .logo {
-    margin: 0 2rem 0 0;
+  .navbar.is-active .navbar-item {
+    margin: 0;
+    width: 100%;
+    text-align: right;
   }
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
+  .navbar.is-active .navbar-item:not(:last-child) {
+    margin-bottom: 1rem;
   }
 }
 </style>

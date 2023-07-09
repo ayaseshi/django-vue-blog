@@ -1,3 +1,11 @@
-from django.shortcuts import render
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
-# Create your views here.
+from .models import Tag
+from .serializers import Tagserializer
+
+@api_view(['GET'])
+def get_tags(request):
+    tag_list = Tag.objects.all()
+    serializer = Tagserializer(tag_list, many=True)
+    return Response(serializer.data)
