@@ -1,5 +1,7 @@
+#backend files
 __pycache__
 db.sqlite3
+image
 
 # Logs
 logs
