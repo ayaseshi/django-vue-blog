@@ -31,12 +31,12 @@
               Opcje
             </a>
             <div class="navbar-dropdown is-right">
-              <a class="navbar-item">
-                Login
-              </a>
-              <a class="navbar-item">
-                Register
-              </a>
+              <router-link to="/login" class="navbar-item">
+                Sign in
+              </router-link>
+              <router-link to="/register" class="navbar-item">
+                Sign up
+              </router-link>
               <a class="navbar-item">
                 Download ebook
               </a>
