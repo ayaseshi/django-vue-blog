@@ -12,10 +12,10 @@ def login(request):
     user = authenticate(username=username, password=password)
 
     if user is not None:
-        token, created = Token.objects.get_or_create(user=user)
+        token, _ = Token.objects.get_or_create(user=user)
         return Response({'token': token.key})
     else:
-        return Response({'error': 'Nieprawidłowe dane logowania.'})
+        return Response({'error': 'Incorrect login or password.'})
 
 @api_view(['POST'])
 def register(request):
@@ -23,7 +23,7 @@ def register(request):
     password = request.data.get('password')
 
     if User.objects.filter(username=username).exists():
-        return Response({'error': 'Użytkownik o podanej nazwie już istnieje.'})
+        return Response({'error': 'User with the given username already exists.'})
 
     user = User.objects.create_user(username=username, password=password)
 
@@ -31,4 +31,4 @@ def register(request):
         token = Token.objects.create(user=user)
         return Response({'token': token.key})
     else:
-        return Response({'error': 'Wystąpił problem podczas rejestracji.'})
+        return Response({'error': 'There was a problem during registration.'})

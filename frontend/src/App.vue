@@ -6,14 +6,15 @@
           <strong>BLOG</strong>
         </RouterLink>
 
-        <a class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu" @click="toggleMobileMenu">
+        <a class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu"
+          @click="toggleMobileMenu">
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
         </a>
       </div>
 
-      <div class="navbar-menu" :class="{'is-active': isMobileMenuOpen}">
+      <div class="navbar-menu" :class="{ 'is-active': isMobileMenuOpen }">
         <div class="navbar-end">
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">
@@ -52,11 +53,11 @@
 
     <footer class="footer">
       <div class="content has-text-centered">
-          <p>
-            <a href="https://github.com/ayaseshi">
+        <p>
+          <a href="https://github.com/ayaseshi">
             Created by ayaseshi
-            </a>
-          </p>
+          </a>
+        </p>
       </div>
     </footer>
   </div>
