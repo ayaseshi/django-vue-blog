@@ -80,7 +80,7 @@ export default {
         if (data.token) {
           localStorage.setItem('login', this.username);
           localStorage.setItem('token', data.token);
-
+          this.$emit('login');
           this.$router.push({ name: 'home' });
         } else if (data.error) {
           this.showNotification(data.error);

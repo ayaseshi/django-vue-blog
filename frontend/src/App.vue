@@ -29,18 +29,37 @@
 
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">
-              Opcje
+              <font-awesome-icon :icon="['fa', 'user']" style="color: #28c4a4;" />
             </a>
             <div class="navbar-dropdown is-right">
-              <router-link to="/login" class="navbar-item">
-                Sign in
-              </router-link>
-              <router-link to="/register" class="navbar-item">
-                Sign up
-              </router-link>
+              <template v-if="isLoggedIn">
+                <a class="navbar-item">
+                  {{ username }}
+                </a>
+                <a class="navbar-item">
+                  Add your recipe
+                </a>
+                <a class="navbar-item">
+                  Favorites
+                </a>
+              </template>
+              <template v-if="!isLoggedIn">
+                <router-link to="/login" class="navbar-item">
+                  Sign in
+                </router-link>
+                <router-link to="/register" class="navbar-item">
+                  Sign up
+                </router-link>
+              </template>
               <a class="navbar-item">
                 Download ebook
               </a>
+              <template v-if="isLoggedIn">
+                <hr class="navbar-divider">
+                <a class="navbar-item" @click="logoutUser">
+                  Logout
+                </a>
+              </template>
             </div>
           </div>
         </div>
@@ -48,7 +67,7 @@
     </nav>
 
     <section class="section">
-      <RouterView />
+      <RouterView :isLoggedIn="isLoggedIn" @login="updateLoginStatus" />
     </section>
 
     <footer class="footer">
@@ -70,7 +89,9 @@ export default {
   data() {
     return {
       isMobileMenuOpen: false,
-      dishes: []
+      dishes: [],
+      isLoggedIn: false,
+      username: ''
     };
   },
   async mounted() {
@@ -85,6 +106,12 @@ export default {
           url: tag.url
         };
       });
+
+      const token = localStorage.getItem('token');
+      if (token) {
+        this.isLoggedIn = true;
+        this.username = localStorage.getItem('login');
+      }
     } catch (error) {
       console.error(error);
     }
@@ -93,7 +120,21 @@ export default {
     toggleMobileMenu() {
       this.isMobileMenuOpen = !this.isMobileMenuOpen;
     },
-  },
+    logoutUser() {
+      localStorage.removeItem('login');
+      localStorage.removeItem('token');
+      this.isLoggedIn = false;
+      this.$router.push({ name: 'home' });
+    },
+    updateLoginStatus() {
+      const token = localStorage.getItem('token');
+      if (token) {
+        this.isLoggedIn = true;
+      } else {
+        this.isLoggedIn = false;
+      }
+    }
+  }
 };
 </script>
 
@@ -113,14 +154,12 @@ export default {
   padding: 1rem 0;
 }
 
-/* Dodatkowe style dla napisu "BLOG" */
 .logo {
   font-size: 1.5rem;
   text-transform: uppercase;
   letter-spacing: 2px;
 }
 
-/* Responsywność dla aplikacji na telefonach */
 @media screen and (max-width: 768px) {
   .navbar-menu {
     display: none;
