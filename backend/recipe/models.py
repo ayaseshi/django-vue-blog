@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.files import File
+from django.contrib.auth.models import User
 
 from PIL import Image
 from io import BytesIO
@@ -18,6 +19,7 @@ class Tag(models.Model):
         return f'{self.slug}/'
     
 class Recipe(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=1000)
     ingredients = models.JSONField()
