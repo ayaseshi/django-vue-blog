@@ -34,6 +34,7 @@ class Recipe(models.Model):
         )
     )
     tag = models.ForeignKey(Tag, related_name='recipes', on_delete=models.CASCADE)
+    slug = models.SlugField(unique=True)
 
     class Meta():
         ordering = ('-date_added', )
@@ -52,9 +53,14 @@ class Recipe(models.Model):
             return self.thumbnail.url
         else:
             img = Image.open(self.img)
-            img.convert('RGB')
+            img = img.convert('RGB')
             img.thumbnail((300, 200))
             thumb_io = BytesIO()
             img.save(thumb_io, 'JPEG', quality=85)
-
-            self.thumbnail = File(thumb_io, name=self.image.name)
+            self.thumbnail.save(
+                self.img.name.split('/')[-1].split('.')[0] + '_thumb.jpg',
+                File(thumb_io),
+                save=False
+            )
+            self.save()
+            return self.thumbnail.url
