@@ -1,28 +1,39 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import APIView
 from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
+
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 from .models import Tag, Recipe
-from .serializers import TagSerializer, RecipeListSerializer
+from .serializers import TagSerializer, RecipeSerializer
 
-@api_view(['GET'])
-def get_tags(request):
-    tag_list = Tag.objects.all()
-    serializer = TagSerializer(tag_list, many=True)
-    return Response(serializer.data)
+@extend_schema(tags=["Tag"])
+class TagViewSet(ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
 
-@api_view(['GET'])
-def get_recipes(request):
-    recipe_list = Recipe.objects.all()
-    serializer = RecipeListSerializer(recipe_list, many=True)
-    return Response(serializer.data)
+@extend_schema(tags=["Recipe"])
+class RecipeViewSet(ModelViewSet):
+    queryset = Recipe.objects.all()
+    serializer_class = RecipeSerializer
 
-@api_view(['GET'])
-def get_recipes_by_page(request):
-    page = int(request.GET.get('page'))
-    records_per_page = 6
-    start_index = (page - 1) * records_per_page
-    end_index = page * records_per_page
+class RecipePaginationView(APIView):
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='page',
+                required=True,
+                type=int,
+            ),
+        ],
+        tags=["Recipe"]
+    )
+    def get(self, request, *args, **kwargs):
+        page = int(request.GET.get('page'))
+        records_per_page = 6
+        start_index = (page - 1) * records_per_page
+        end_index = page * records_per_page
 
-    recipe_list = Recipe.objects.all()[start_index:end_index]
-    serializer = RecipeListSerializer(recipe_list, many=True)
-    return Response(serializer.data)
+        recipe_list = Recipe.objects.all()[start_index:end_index]
+        serializer = RecipeSerializer(recipe_list, many=True)
+        return Response(serializer.data)

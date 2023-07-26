@@ -11,7 +11,7 @@ class TagSerializer(serializers.ModelSerializer):
             'url',
         )
 
-class RecipeListSerializer(serializers.ModelSerializer):
+class RecipeSerializer(serializers.ModelSerializer):
     class Meta():
         model = Recipe
         fields = (
